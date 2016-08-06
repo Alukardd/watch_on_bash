@@ -83,6 +83,7 @@ while :; do
     j=0;
     while read line; do
       prev_line="${prev[$((j++))]}"
+      [[ -z $line ]] && { ((j--)); echo ''; continue; }
       for ((i=0; i<${#line}; i++)); do
         if [[ "${line:$i:1}" == "${prev_line:$i:1}" ]]; then
           echo -n "${line:$i:1}"
