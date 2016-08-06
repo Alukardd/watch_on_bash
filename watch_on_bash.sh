@@ -36,6 +36,13 @@ set -- $(sed -E 's/(--[^=]+)=/\1 /g' <<< "$*")
 # parse options
 while [ $# -gt 0 ]; do
     case "$1" in
+        --*|-*)
+            if [[ ${#args[@]} -gt 0 ]]; then
+              args=($args "$1")
+              shift
+              continue
+            fi
+            ;;&
         --help|-h)
             printHelp
             die
