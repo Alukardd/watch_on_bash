@@ -78,12 +78,17 @@ echo -e "\e[?1049h\e[?25l"
 IFS=$'\n'
 while :; do
   echo -e "\e[H\e[J"
-  cur=( "$(eval ${args[@]})" )
+
+  cur=()
+  i=0
+  while read line; do
+    cur[$((i++))]="$line"
+  done <<< "$(eval ${args[@]})"
+
   if $SHOWDIFF; then
     j=0;
     while read line; do
       prev_line="${prev[$((j++))]}"
-      [[ -z $line ]] && { ((j--)); echo ''; continue; }
       for ((i=0; i<${#line}; i++)); do
         if [[ "${line:$i:1}" == "${prev_line:$i:1}" ]]; then
           echo -n "${line:$i:1}"
@@ -92,10 +97,15 @@ while :; do
         fi
       done
       echo
-    done <<< "${cur[@]}"
-    prev=( ${cur[@]} )
+    done <<< "${cur[*]}"
+
+    prev=()
+    for ((i=0; i<${#cur[@]}; i++)); do
+      prev[$i]="${cur[$i]}"
+    done
+
   else
-    echo "${cur[@]}"
+    echo "${cur[*]}"
   fi
 
   sleep $TIMEOUT
