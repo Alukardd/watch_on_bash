@@ -32,15 +32,14 @@ SHOWDIFF=false
 TIMEOUT=1
 
 # fix for long options anyeater
-set -- $(sed -E 's/(--[^=]+)=/\1 /g' <<< "$*")
+set -- $(sed -E 's/(--[^=]+)=/\1 /g' <<< "$@")
 # parse options
 while [ $# -gt 0 ]; do
     case "$1" in
         --*|-*)
             if [[ ${#args[@]} -gt 0 ]]; then
-              args=($args "$1")
-              shift
-              continue
+              args=(${args[@]} "$@")
+              break
             fi
             ;;&
         --help|-h)
@@ -57,7 +56,7 @@ while [ $# -gt 0 ]; do
             ;;
         --)
             shift
-            args=($args "$*")
+            args=(${args[@]} "$@")
             break
             ;;
         --*|-*)
@@ -65,7 +64,7 @@ while [ $# -gt 0 ]; do
             die "Unknown option: $1" 65
             ;;
         *)
-            args=($args "$1")
+            args[${#args[@]}]="$1"
             ;;
     esac
     shift
