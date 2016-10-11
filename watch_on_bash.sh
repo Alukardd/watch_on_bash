@@ -78,11 +78,7 @@ IFS=$'\n'
 while :; do
   echo -e "\e[H\e[J"
 
-  cur=()
-  i=0
-  while read line; do
-    cur[$((i++))]="$line"
-  done <<< "$(eval ${args[@]})"
+  readarray -t cur <<< $(eval ${args[@]})
 
   if $SHOWDIFF; then
     for ((j=0; j<${#cur[@]}; j++)); do
@@ -96,13 +92,12 @@ while :; do
         fi
       done
       echo
-
-      prev[$j]="${cur[$j]}"
     done
 
   else
     echo "${cur[*]}"
   fi
+  prev=(${cur[@]})
 
   sleep $TIMEOUT
 done
