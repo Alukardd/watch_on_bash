@@ -82,10 +82,10 @@ while :; do
 
   if $SHOWDIFF; then
     for ((j=0; j<${#cur[@]}; j++)); do
-      line="${cur[$j]}"
-      prev_line="${prev[$j]}"
+      line=${cur[$j]}
+      prev_line=${prev[$j]}
       for ((i=0; i<${#line}; i++)); do
-        if [[ "${line:$i:1}" == "${prev_line:$i:1}" ]]; then
+        if [[ ${line:$i:1} == ${prev_line:$i:1} ]]; then
           echo -n "${line:$i:1}"
         else
           echo -ne "\e[7m${line:$i:1}\e[27m"
