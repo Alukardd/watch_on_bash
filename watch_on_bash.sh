@@ -10,7 +10,7 @@ function restore {
 function die() {
     # error message if exist
     [[ $1 ]] && echo -e "\033[01;31mERROR!\033[01;00m ${1}"
-    exit ${2:-0}
+    exit "${2:-0}"
 }
 trap restore TERM INT
 
@@ -32,13 +32,14 @@ SHOWDIFF=false
 TIMEOUT=1
 
 # fix for long options anyeater
+# shellcheck disable=SC2046
 set -- $(sed -E 's/(--[^=]+)=/\1 /g' <<< "$@")
 # parse options
 while [ $# -gt 0 ]; do
     case "$1" in
         --*|-*)
             if [[ ${#args[@]} -gt 0 ]]; then
-              args=(${args[@]} "$@")
+              args=("${args[@]}" "$@")
               break
             fi
             ;;&
@@ -56,7 +57,7 @@ while [ $# -gt 0 ]; do
             ;;
         --)
             shift
-            args=(${args[@]} "$@")
+            args=("${args[@]}" "$@")
             break
             ;;
         --*|-*)
@@ -78,14 +79,14 @@ IFS=$'\n'
 while :; do
   echo -e "\e[H\e[J"
 
-  readarray -t cur <<< $(eval ${args[@]})
+  readarray -t cur <<< "$(eval "${args[@]}")"
 
   if $SHOWDIFF; then
     for ((j=0; j<${#cur[@]}; j++)); do
       line=${cur[$j]}
       prev_line=${prev[$j]}
       for ((i=0; i<${#line}; i++)); do
-        if [[ ${line:$i:1} == ${prev_line:$i:1} ]]; then
+        if [[ ${line:$i:1} == "${prev_line:$i:1}" ]]; then
           echo -n "${line:$i:1}"
         else
           echo -ne "\e[7m${line:$i:1}\e[27m"
@@ -97,7 +98,7 @@ while :; do
   else
     echo "${cur[*]}"
   fi
-  prev=(${cur[@]})
+  prev=("${cur[@]}")
 
-  sleep $TIMEOUT
+  sleep "$TIMEOUT"
 done
